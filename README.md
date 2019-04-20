@@ -3,7 +3,7 @@ Text diff library for PHP
 
 ## Installation
 ```cmd
-composer install yusitnikov/php-diff
+composer require yusitnikov/php-diff
 ```
 
 ## Usage
