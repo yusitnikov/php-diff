@@ -1,0 +1,21 @@
+{
+    "name": "yusitnikov/php-diff",
+    "description": "Text diff library for PHP",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Yura Sitnikov",
+            "email": "y.sitnikoff@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^7.0"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Chameleon\\PhpDiff\\": "src/"
+        }
+    }
+}
