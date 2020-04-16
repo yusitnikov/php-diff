@@ -16,6 +16,8 @@ Create an instance of `LevenshteinDiffCalculator`. Arguments:
 
 ### Example 1. Simple use-case - calculate distance and diff letter by letter.
 ```php
+use Chameleon\PhpDiff\LevenshteinDiffCalculator;
+
 $s1 = 'Levenshtein';
 $s2 = 'Einstein';
 
@@ -83,6 +85,9 @@ tein
 ### Example 2. Complex differ - compare lines and words
 
 ```php
+use Chameleon\PhpDiff\LevenshteinDiffCalculator;
+use Chameleon\PhpDiff\OperationCostCalculator;
+
 $s1 = 'And now here is my secret,
 a very simple secret:
 it is only with the heart that one can see rightly,
@@ -96,7 +101,6 @@ $s2 = '> So here is my secret,
 > I can promise it to you.
 
 - Le Petit Prince, Antoine Marie Jean-Baptiste Roger, comte de Saint-Exupéry';
-
 $lineDiffer = new LevenshteinDiffCalculator(LevenshteinDiffCalculator::SPLIT_WORDS_REGEX);
 $textDiffer = new LevenshteinDiffCalculator(
     LevenshteinDiffCalculator::SPLIT_LINES_REGEX,
