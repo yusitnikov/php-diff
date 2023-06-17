@@ -66,54 +66,54 @@ class LevenshteinDiffCalculator implements StringDiffCalculatorInterface
     private function _calcDistance($s1, $s2, $keepMatrix)
     {
         // normalize the input
-        $s1 = $this->split($s1);
-        $s2 = $this->split($s2);
+        $parts1 = $this->split($s1);
+        $parts2 = $this->split($s2);
 
         // reset the matrix
         $m =& $this->matrix;
         $m = [];
 
         // temporary variables
-        $n1 = count($s1);
-        $n2 = count($s2);
+        $n1 = count($parts1);
+        $n2 = count($parts2);
 
         // check for perfect equality
-        if ($s1 === $s2) {
+        if ($parts1 === $parts2) {
             $this->startMatch = $n1;
             $this->endMatch = 0;
             return 0;
         }
 
         // check for trailing equality
-        for ($this->startMatch = 0; $this->startMatch < $n1 && $this->startMatch < $n2 && $s1[$this->startMatch] === $s2[$this->startMatch]; $this->startMatch++) { }
+        for ($this->startMatch = 0; $this->startMatch < $n1 && $this->startMatch < $n2 && $parts1[$this->startMatch] === $parts2[$this->startMatch]; $this->startMatch++) { }
         if ($this->startMatch) {
-            $s1 = array_slice($s1, $this->startMatch);
+            $parts1 = array_slice($parts1, $this->startMatch);
             $n1 -= $this->startMatch;
-            $s2 = array_slice($s2, $this->startMatch);
+            $parts2 = array_slice($parts2, $this->startMatch);
             $n2 -= $this->startMatch;
         }
-        for ($this->endMatch = 0; $this->endMatch < $n1 && $this->endMatch < $n2 && $s1[$n1 - 1 - $this->endMatch] === $s2[$n2 - 1 - $this->endMatch]; $this->endMatch++) { }
+        for ($this->endMatch = 0; $this->endMatch < $n1 && $this->endMatch < $n2 && $parts1[$n1 - 1 - $this->endMatch] === $parts2[$n2 - 1 - $this->endMatch]; $this->endMatch++) { }
         if ($this->endMatch) {
-            $s1 = array_slice($s1, 0, -$this->endMatch);
+            $parts1 = array_slice($parts1, 0, -$this->endMatch);
             $n1 -= $this->endMatch;
-            $s2 = array_slice($s2, 0, -$this->endMatch);
+            $parts2 = array_slice($parts2, 0, -$this->endMatch);
             $n2 -= $this->endMatch;
         }
 
         // init the first row
         $m[0][0] = 0;
         for ($i2 = 0; $i2 < $n2; $i2++) {
-            $m[0][$i2 + 1] = $m[0][$i2] + $this->operationCostCalculator->getInsertCost($s2[$i2]);
+            $m[0][$i2 + 1] = $m[0][$i2] + $this->operationCostCalculator->getInsertCost($parts2[$i2]);
         }
 
         // calc the matrix row by row
         for ($i1 = 0; $i1 < $n1; $i1++) {
-            $c1 = $s1[$i1];
+            $c1 = $parts1[$i1];
             $deleteCost = $this->operationCostCalculator->getDeleteCost($c1);
             $m[$i1 + 1][0] = $m[$i1][0] + $deleteCost;
 
             for ($i2 = 0; $i2 < $n2; $i2++) {
-                $c2 = $s2[$i2];
+                $c2 = $parts2[$i2];
                 $insertCost = $this->operationCostCalculator->getInsertCost($c2);
                 $replaceCost = $this->operationCostCalculator->getReplaceCost($c1, $c2);
                 $m[$i1 + 1][$i2 + 1] = min(
@@ -153,32 +153,32 @@ class LevenshteinDiffCalculator implements StringDiffCalculatorInterface
     public function calcDiff($s1, $s2)
     {
         // normalize the input
-        $s1 = $this->split($s1);
-        $s2 = $this->split($s2);
+        $parts1 = $this->split($s1);
+        $parts2 = $this->split($s2);
 
         // calc the distance and the matrix
-        $distance = $this->_calcDistance($s1, $s2, true);
+        $distance = $this->_calcDistance($parts1, $parts2, true);
 
         // temporary variables
         $m = $this->matrix;
-        $n1 = count($s1);
-        $n2 = count($s2);
+        $n1 = count($parts1);
+        $n2 = count($parts2);
 
         // check if calcDistance identified perfect or partial equality
         $startDiff = [];
         if ($this->startMatch) {
-            $startDiff[] = new StringDiffOperation(StringDiffOperation::MATCH, implode('', array_slice($s1, 0, $this->startMatch)));
-            $s1 = array_slice($s1, $this->startMatch);
+            $startDiff[] = new StringDiffOperation(StringDiffOperation::MATCH, implode('', array_slice($parts1, 0, $this->startMatch)));
+            $parts1 = array_slice($parts1, $this->startMatch);
             $n1 -= $this->startMatch;
-            $s2 = array_slice($s2, $this->startMatch);
+            $parts2 = array_slice($parts2, $this->startMatch);
             $n2 -= $this->startMatch;
         }
         $endDiff = [];
         if ($this->endMatch) {
-            $endDiff[] = new StringDiffOperation(StringDiffOperation::MATCH, implode('', array_slice($s1, -$this->endMatch)));
-            $s1 = array_slice($s1, 0, -$this->endMatch);
+            $endDiff[] = new StringDiffOperation(StringDiffOperation::MATCH, implode('', array_slice($parts1, -$this->endMatch)));
+            $parts1 = array_slice($parts1, 0, -$this->endMatch);
             $n1 -= $this->endMatch;
-            $s2 = array_slice($s2, 0, -$this->endMatch);
+            $parts2 = array_slice($parts2, 0, -$this->endMatch);
             $n2 -= $this->endMatch;
         }
 
@@ -186,8 +186,8 @@ class LevenshteinDiffCalculator implements StringDiffCalculatorInterface
         $i1 = $n1;
         $i2 = $n2;
         while ($i1 || $i2) {
-            $c1 = $i1 ? $s1[$i1 - 1] : null;
-            $c2 = $i2 ? $s2[$i2 - 1] : null;
+            $c1 = $i1 ? $parts1[$i1 - 1] : null;
+            $c2 = $i2 ? $parts2[$i2 - 1] : null;
             $insertCost = $i2 ? $m[$i1][$i2 - 1] + $this->operationCostCalculator->getInsertCost($c2) : PHP_INT_MAX;
             $deleteCost = $i1 ? $m[$i1 - 1][$i2] + $this->operationCostCalculator->getDeleteCost($c1) : PHP_INT_MAX;
             $replaceCost = ($i1 && $i2) ? $m[$i1 - 1][$i2 - 1] + $this->operationCostCalculator->getReplaceCost($c1, $c2) : PHP_INT_MAX;
