@@ -9,6 +9,7 @@
         }
     ],
     "license": "MIT",
+    "version": "1.0.1",
     "require": {
         "php": "^7.0|^8.0"
     },
