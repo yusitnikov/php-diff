@@ -21,11 +21,13 @@ class LevenshteinDiffCalculator implements StringDiffCalculatorInterface
     /** @var StringDiffCalculatorInterface */
     private $itemDiffCalculator;
 
+    /** @var int */
     private $startMatch;
+    /** @var int */
     private $endMatch;
 
     public function __construct(
-        $separatorRegex = self::SPLIT_CHARS_REGEX,
+        string $separatorRegex = self::SPLIT_CHARS_REGEX,
         OperationCostCalculator $operationCostCalculator = null,
         StringDiffCalculatorInterface $itemDiffCalculator = null
     )
@@ -39,7 +41,7 @@ class LevenshteinDiffCalculator implements StringDiffCalculatorInterface
      * @param string[]|string $s
      * @return string[]
      */
-    private function split($s)
+    private function split($s): array
     {
         if (is_array($s)) {
             return $s;
@@ -52,18 +54,18 @@ class LevenshteinDiffCalculator implements StringDiffCalculatorInterface
      * @param string $s
      * @return bool
      */
-    private function isSeparator($s)
+    private function isSeparator(string $s): bool
     {
         return $this->separatorRegex !== '' && preg_match('/^(?:' . $this->separatorRegex . ')+$/u', $s);
     }
 
     /**
-     * @param string $s1
-     * @param string $s2
+     * @param string[]|string $s1
+     * @param string[]|string $s2
      * @param bool $keepMatrix
      * @return int
      */
-    private function _calcDistance($s1, $s2, $keepMatrix)
+    private function _calcDistance($s1, $s2, bool $keepMatrix): int
     {
         // normalize the input
         $parts1 = $this->split($s1);
@@ -135,22 +137,12 @@ class LevenshteinDiffCalculator implements StringDiffCalculatorInterface
         return $distance;
     }
 
-    /**
-     * @param string $s1
-     * @param string $s2
-     * @return int
-     */
-    public function calcDistance($s1, $s2)
+    public function calcDistance(string $s1, string $s2): int
     {
         return $this->_calcDistance($s1, $s2, false);
     }
 
-    /**
-     * @param string $s1
-     * @param string $s2
-     * @return StringDiffResult
-     */
-    public function calcDiff($s1, $s2)
+    public function calcDiff(string $s1, string $s2): StringDiffResult
     {
         // normalize the input
         $parts1 = $this->split($s1);
