@@ -46,7 +46,7 @@ class LevenshteinDiffCalculator implements StringDiffCalculatorInterface
         if (is_array($s)) {
             return $s;
         } else {
-            return preg_split('/(' . $this->separatorRegex . ')/u', $s, null, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+            return preg_split('/(' . $this->separatorRegex . ')/u', $s, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
         }
     }
 
