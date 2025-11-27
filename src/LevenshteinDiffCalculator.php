@@ -26,15 +26,19 @@ class LevenshteinDiffCalculator implements StringDiffCalculatorInterface
     /** @var int */
     private $endMatch;
 
+    /**
+     * @param OperationCostCalculator|null $operationCostCalculator
+     * @param StringDiffCalculatorInterface|null $itemDiffCalculator
+     */
     public function __construct(
         string $separatorRegex = self::SPLIT_CHARS_REGEX,
-        OperationCostCalculator $operationCostCalculator = null,
-        StringDiffCalculatorInterface $itemDiffCalculator = null
+        $operationCostCalculator = null,
+        $itemDiffCalculator = null
     )
     {
         $this->separatorRegex = $separatorRegex;
-        $this->operationCostCalculator = $operationCostCalculator ?? new OperationCostCalculator();
-        $this->itemDiffCalculator = $itemDiffCalculator;
+        $this->operationCostCalculator = $operationCostCalculator instanceof OperationCostCalculator ? $operationCostCalculator : new OperationCostCalculator();
+        $this->itemDiffCalculator = $itemDiffCalculator instanceof StringDiffCalculatorInterface ? $itemDiffCalculator : null;
     }
 
     /**
