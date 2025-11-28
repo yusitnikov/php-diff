@@ -28,8 +28,8 @@ class LevenshteinDiffCalculator implements StringDiffCalculatorInterface
 
     public function __construct(
         string $separatorRegex = self::SPLIT_CHARS_REGEX,
-        OperationCostCalculator $operationCostCalculator = null,
-        StringDiffCalculatorInterface $itemDiffCalculator = null
+        ?OperationCostCalculator $operationCostCalculator = null,
+        ?StringDiffCalculatorInterface $itemDiffCalculator = null
     )
     {
         $this->separatorRegex = $separatorRegex;
